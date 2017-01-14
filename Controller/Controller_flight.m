@@ -1,7 +1,9 @@
 function F = Controller_flight(x, k1, k2, L, lLeg_flag, t_prev_stance, target_pos, k_f, max_dx_des)
 % Function for state feedback controller.
 %
-% F:   Joint Torque (N*m)
+% F(1):   Joint Torque for front foot  (N*m)
+% F(2):   Joint Torque for rear foot   (N*m)
+% F(3):   Force for retracting rear foot (N)
 F = zeros(3,1);
 
 %% Front foot (orientation)

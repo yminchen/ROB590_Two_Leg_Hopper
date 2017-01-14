@@ -40,10 +40,10 @@ g = 9.81;           % gravitational constant (m/s^2)
 ter_i = 0;          % terrain label
 k = 0;
 % controller parameters
-target_pos = 10;
+target_pos = 0;
 t_prev_stance = 0.2/(k1/100);
 H = 1.2;            % desired height (effecting kp_rai and kp_pos!)
-max_dx_des = 1;     % maximum of desired speed (not real speed)
+max_dx_des = 3;     % maximum of desired speed (not real speed)
         % max_dx_des can go to 8 or higher, but then it also jumps higher.
 dx_des = 0;         % desired speed (initialized to be 0)
 E_low = 0;          % energy at lowest point (initialized to be 0)
@@ -140,6 +140,9 @@ end
 %% SIMULATION:
 
 while T(size(T,1)) < Tf
+    if T(lenX) > 2
+        target_pos = 20;
+    end
     %%% flight phase %%%
     if phase == 0 
         
@@ -432,21 +435,21 @@ if fflag
     plot(T,X(:,5),'m','LineWidth',2); hold on;
     plot(T,X(:,10),'g--','LineWidth',1); hold on;
     plot(T,X(:,12),'m--','LineWidth',1);
-    legend('theta (rad)' ,'phi (rad)', 'dtheta (rad/s)','dphi (rad/s)');
+    legend('theta (rad)' ,'phi1 (rad)', 'dtheta (rad/s)','dphi1 (rad/s)');
     title('\fontsize{12}\fontname{Arial Black}Angle plot');
     
     figure;
     plot(T,X(:,3)+X(:,5),'m','LineWidth',2);hold on;
     plot(T,X(:,10)+X(:,12),'c','LineWidth',2);
     plot([T(1) T(size(T,1))], [1 1],'r--','LineWidth',1);
-    legend('theta+phi (rad)', 'dtheta+dphi (rad/s), ', 'target');
+    legend('theta+phi1 (rad)', 'dtheta+dphi1 (rad/s), ', 'target');
     title('\fontsize{12}\fontname{Arial Black} Global angle plot');
     axis([0 T(size(T,1)) -2 2]);
     
     figure;
     plot(T,X(:,4),'k','LineWidth',2);hold on;
     plot(T,X(:,11),'k--','LineWidth',1);
-    legend('s (m)', 'ds (m/s)');
+    legend('s1 (m)', 'ds1 (m/s)');
     title('\fontsize{12}\fontname{Arial Black}spring length plot');
     axis([0 T(size(T,1)) -2 2]);
     

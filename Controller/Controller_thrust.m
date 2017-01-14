@@ -1,7 +1,9 @@
 function F = Controller_thrust(x, k1, k2, L, lLeg_flag)
 % Function for state feedback controller.
 %
-% F:   Joint Torque (N*m)
+% F(1):   Joint Torque for balancing body  (N*m)
+% F(2):   Joint Torque for swing leg       (N*m)
+% F(3):   Force for retracting swing leg    (N)
 F = zeros(3,1);
 
 %% Body balance
