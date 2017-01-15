@@ -21,6 +21,7 @@ elseif terrain_label == 2
             9   2
             11  0];
     
+% A smaller version of the previous one.
 elseif terrain_label == 3
     edge = [1   2
             1.1 0
@@ -31,6 +32,19 @@ elseif terrain_label == 3
             7   0.75
             8   1.25
             9   1
+            11  0];
+
+% A smaller version of the previous one.
+elseif terrain_label == 3
+    edge = [1   2
+            1.1 0
+            2   0
+            4   0.25
+            5   0.5
+            6   0.5
+            7   0.375
+            8   0.625
+            9   0.5
             11  0];
     
 end

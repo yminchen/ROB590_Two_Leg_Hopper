@@ -1,3 +1,8 @@
+% 1. Tune gain 
+% 2. plot region of attraction 
+% 3. add events for other foot hitting ground
+% 4. 
+
 %% Two-leg Hopper model jumping in two dimension.
 
 % Author: Yu-Ming Chen, University of Michigan, Ann Arbor
@@ -17,7 +22,7 @@ clear,clc
 addpath('EOM','EventsFcn','Controller','Animation','Terrain');
 
 % settings
-fflag = 1;          % flag to enable figure plot (don't enable this with animation at the same time)
+fflag = 0;          % flag to enable figure plot (don't enable this with animation at the same time)
 aflag = not(fflag); % flag to enable anima3tion creation
 vflag = not(fflag); % flag to enable animation recording (create a avi video)
 fignum = 1;         % figure number
@@ -37,13 +42,14 @@ k2 = 500;           % left spring constant
         % if you want higher speed, you need higher k.
 d = 10;             % spring damping 
 g = 9.81;           % gravitational constant (m/s^2)
-ter_i = 0;          % terrain label
-k = 0;
+ter_i = 2;          % terrain label
+
 % controller parameters
 target_pos = 0;
+target_pos_Tdepart = 10;
 t_prev_stance = 0.2/(k1/100);
 H = 1.2;            % desired height (effecting kp_rai and kp_pos!)
-max_dx_des = 3;     % maximum of desired speed (not real speed)
+max_dx_des = 1;     % maximum of desired speed (not real speed)
         % max_dx_des can go to 8 or higher, but then it also jumps higher.
 dx_des = 0;         % desired speed (initialized to be 0)
 E_low = 0;          % energy at lowest point (initialized to be 0)
@@ -66,7 +72,9 @@ k_f = [kp_pos kd_pos kp_rai];  % f stands for flight
 
 % simulation parameters
 T0 = 0;
-Tf = 15;
+Tf = 20;
+% departure time
+Tdepart = 2;
 % ode45 events parameters
 t_evMax = 1;
 % initial simulation parameters
@@ -140,9 +148,10 @@ end
 %% SIMULATION:
 
 while T(size(T,1)) < Tf
-    if T(lenX) > 2
-        target_pos = 20;
+    if T(lenX) > Tdepart
+        target_pos = target_pos_Tdepart;
     end
+    
     %%% flight phase %%%
     if phase == 0 
         
@@ -200,7 +209,7 @@ while T(size(T,1)) < Tf
             x_td = x(n,:);
             
         elseif (size(te,1)>0)
-%             display('coming out from the ground. incorrect dynamics.');
+            display('coming out from the ground. incorrect dynamics.');
 %             break;
         end
         
@@ -545,9 +554,9 @@ if aflag
                   'LineWidth',1.5);
         % Display time on plot
         tc = T(ti);     % current time
-        text(0.8*boarderL,0.2*boarderT,'\fontsize{10}\fontname{Arial Black}elapsed time:','color','k')
+        text(0.8*boarderL,0.2*boarderT,'\fontsize{10}\fontname{Arial Black}elapsed time:','color','y')
         text(0.8*boarderL,0.1*boarderT,['\fontsize{10}\fontname{Arial Black}' ...
-            num2str(tc,'%1.1f') ' sec'],'color','k')
+            num2str(tc,'%1.1f') ' sec'],'color','y')
         % Display states on plot
         sc = S(ti);     % current state
         text(0.8*boarderL,0.9*boarderT,'\fontsize{10}\fontname{Arial Black}Flight','color',[0.8,0.8,0.8])
