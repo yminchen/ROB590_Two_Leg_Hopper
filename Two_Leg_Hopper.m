@@ -1,8 +1,3 @@
-% 1. Tune gain 
-% 2. plot region of attraction 
-% 3. add events for other foot hitting ground
-% 4. 
-
 %% Two-leg Hopper model jumping in two dimension.
 
 % Author: Yu-Ming Chen, University of Michigan, Ann Arbor
@@ -124,6 +119,7 @@ contact_pos = zeros(2,1);
 % finite state machine
 lLeg_flag = 0;      % 0 is right leg, and 1 is left leg.
 phase = 0;          % 0 is flight phase, and 1 is stance phase
+postApex_flag = 0;  % Flight phase: 0 is before Apex, and 1 is after Apex.
 thrust_flag = 0;    % 0 is in thrust phase, 1 is not.
                     
 % output value        
@@ -157,7 +153,7 @@ while T(size(T,1)) < Tf
         
         options = odeset('Events', @(t,x) EventsFcn_flight(t,x,lLeg_flag,ter_i));
         [t,x,te,xe,ie] = ode45(@(t,x) F_freefall(t,x,d,k1,k2,L_sp0,L_mB,mB,IB,m1,m2,...
-            lLeg_flag,t_prev_stance,target_pos,k_f,max_dx_des), tspan, x0, options);
+            lLeg_flag,postApex_flag,t_prev_stance,target_pos,k_f,max_dx_des), tspan, x0, options);
         
         n = size(x,1);
         % assign output
@@ -180,6 +176,7 @@ while T(size(T,1)) < Tf
         % If the foot is hitting the ground, switch to stance phase.
         elseif (size(te,1)>0) && (ie(size(ie,1))==1)
             phase = 1;
+            postApex_flag = 0;
             % print
             if lLeg_flag
                 display('switch to compression (left)');
@@ -208,9 +205,8 @@ while T(size(T,1)) < Tf
             % state vector at touch down
             x_td = x(n,:);
             
-        elseif (size(te,1)>0)
-            display('coming out from the ground. incorrect dynamics.');
-%             break;
+        elseif (size(te,1)>0) && (ie(size(ie,1))==3)
+            postApex_flag = 1;
         end
         
     %%% stance phase %%%

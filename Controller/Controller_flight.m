@@ -1,10 +1,11 @@
-function F = Controller_flight(x, k1, k2, L, lLeg_flag, t_prev_stance, target_pos, k_f, max_dx_des)
+function F = Controller_flight(x, k1, k2, L, lLeg_flag, postApex_flag, t_prev_stance, target_pos, k_f, max_dx_des)
 % Function for state feedback controller.
 %
-% F(1):   Joint Torque for front foot  (N*m)
-% F(2):   Joint Torque for rear foot   (N*m)
-% F(3):   Force for retracting rear foot (N)
-F = zeros(3,1);
+% F(1):   Joint Torque for front foot   (N*m)
+% F(2):   Force for retracting front foot (N)
+% F(3):   Joint Torque for rear foot    (N*m)
+% F(4):   Force for retracting rear foot  (N)
+F = zeros(4,1);
 
 %% Front foot (orientation)
 % Position controller parameters
@@ -57,6 +58,18 @@ end
 % Assignment
 F(1) = f_final;
 
+%% Front foot (length)
+% This could be a policy used for rough terrain
+% You can detect the incoming terrain before entering the fligh phase.
+
+% if ~postApex_flag
+%     if lLeg_flag
+%         F(2) = -k2*(L*0.3); % length (retraction)
+%     else
+%         F(2) = -k1*(L*0.3); % length (retraction)
+%     end
+% end
+
 %% Back foot (orientation)
 
 phi_tar = 0; % We want the back foot pointing toward the ground. 
@@ -82,14 +95,14 @@ elseif f_final < -max_f
 end
 
 % Assignment
-F(2) = f_final; % orientation
+F(3) = f_final; % orientation
 
 %% Back foot (length)
 
 if lLeg_flag
-    F(3) = -k1*(L*0.3); % length (retraction)
+    F(4) = -k1*(L*0.3); % length (retraction)
 else
-    F(3) = -k2*(L*0.3); % length (retraction)
+    F(4) = -k2*(L*0.3); % length (retraction)
 end
 % TODO: The retraction length is dependent on 
 %       1. the apex height of body before touchdown and 
